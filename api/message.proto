@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "grpcdemo/api";
+
+// Message service definition
+service MessageService {
+  // Get message
+  rpc GetMessage(GetMessageRequest) returns (GetMessageResponse) {}
+  // Submit message
+  rpc SubmitMessage(SubmitMessageRequest) returns (SubmitMessageResponse) {}
+}
+
+// GetMessage request
+message GetMessageRequest {
+  string name = 1;
+}
+
+// GetMessage response
+message GetMessageResponse {
+  string name = 1;
+  string message = 2;
+}
+
+// SubmitMessage request
+message SubmitMessageRequest {
+  string name = 1;
+  string message = 2;
+}
+
+// SubmitMessage response
+message SubmitMessageResponse {
+  bool success = 1;
+  string message = 2;
+} 
