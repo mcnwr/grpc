@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"sync"
@@ -42,6 +43,7 @@ func (s *MessageServer) GetMessage(ctx context.Context, req *pb.GetMessageReques
 
 func (s *MessageServer) SubmitMessage(ctx context.Context, req *pb.SubmitMessageRequest) (*pb.SubmitMessageResponse, error) {
 	log.Printf("Received SubmitMessage request for name: %s", req.Name)
+	fmt.Printf("Received SubmitMessage request for name: %s", req.Name)
 
 	if req.Name == "" || req.Message == "" {
 		return nil, status.Error(codes.InvalidArgument, "Name and message are required")

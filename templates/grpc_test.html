@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gRPC Connection Tester</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .message {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 4px;
+      }
+      .success {
+        background-color: #dff0d8;
+        border: 1px solid #d6e9c6;
+        color: #3c763d;
+      }
+      .error {
+        background-color: #f2dede;
+        border: 1px solid #ebccd1;
+        color: #a94442;
+      }
+      .request-response {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+      }
+      .request,
+      .response {
+        flex: 1;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+      }
+      pre {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+      .method-selector {
+        margin-bottom: 20px;
+      }
+      .method-selector select {
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        width: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>gRPC Connection Tester</h1>
+
+      <div class="method-selector">
+        <label for="method">Select gRPC Method:</label>
+        <select id="method" onchange="updateForm()">
+          <option value="submit">SubmitMessage</option>
+          <option value="get">GetMessage</option>
+        </select>
+      </div>
+
+      <div id="submitForm" class="form-group">
+        <h2>Submit Message</h2>
+        <form id="submitMessageForm">
+          <div class="form-group">
+            <label for="submitName">Name:</label>
+            <input type="text" id="submitName" required />
+          </div>
+          <div class="form-group">
+            <label for="submitMessage">Message:</label>
+            <textarea id="submitMessage" rows="4" required></textarea>
+          </div>
+          <button type="submit">Submit Message</button>
+        </form>
+      </div>
+
+      <div id="getForm" class="form-group" style="display: none">
+        <h2>Get Message</h2>
+        <form id="getMessageForm">
+          <div class="form-group">
+            <label for="getName">Name:</label>
+            <input type="text" id="getName" required />
+          </div>
+          <button type="submit">Get Message</button>
+        </form>
+      </div>
+
+      <div class="request-response">
+        <div class="request">
+          <h3>Request</h3>
+          <pre id="requestData"></pre>
+        </div>
+        <div class="response">
+          <h3>Response</h3>
+          <pre id="responseData"></pre>
+        </div>
+      </div>
+
+      <div id="result" class="message" style="display: none"></div>
+    </div>
+
+    <script>
+      const resultDiv = document.getElementById("result");
+      const requestData = document.getElementById("requestData");
+      const responseData = document.getElementById("responseData");
+
+      function updateForm() {
+        const method = document.getElementById("method").value;
+        document.getElementById("submitForm").style.display = method === "submit" ? "block" : "none";
+        document.getElementById("getForm").style.display = method === "get" ? "block" : "none";
+      }
+
+      function showMessage(message, isError = false) {
+        resultDiv.textContent = message;
+        resultDiv.className = `message ${isError ? "error" : "success"}`;
+        resultDiv.style.display = "block";
+      }
+
+      function updateRequestData(data) {
+        requestData.textContent = JSON.stringify(data, null, 2);
+      }
+
+      function updateResponseData(data) {
+        responseData.textContent = JSON.stringify(data, null, 2);
+      }
+
+      document.getElementById("submitMessageForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("submitName").value;
+        const message = document.getElementById("submitMessage").value;
+        const request = { name, message };
+
+        updateRequestData(request);
+
+        try {
+          const response = await fetch("/submit", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(request),
+          });
+          const data = await response.json();
+          updateResponseData(data);
+          showMessage(data.message);
+        } catch (error) {
+          updateResponseData({ error: error.message });
+          showMessage("Error: " + error.message, true);
+        }
+      });
+
+      document.getElementById("getMessageForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("getName").value;
+        const request = { name };
+
+        updateRequestData(request);
+
+        try {
+          const response = await fetch(`/get/${name}`);
+          const data = await response.json();
+          updateResponseData(data);
+          showMessage(`Message for ${data.name}: ${data.message}`);
+        } catch (error) {
+          updateResponseData({ error: error.message });
+          showMessage("Error: " + error.message, true);
+        }
+      });
+
+      // Initialize form display
+      updateForm();
+    </script>
+  </body>
+</html>
