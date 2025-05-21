@@ -15,7 +15,7 @@ import (
 )
 
 type PageData struct {
-	Name    string
+	Id      string
 	Message string
 }
 
@@ -50,7 +50,7 @@ func main() {
 		}
 
 		var data struct {
-			Name    string `json:"name"`
+			Id      string `json:"id"`
 			Message string `json:"message"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
@@ -62,7 +62,7 @@ func main() {
 		defer cancel()
 
 		resp, err := client.SubmitMessage(ctx, &pb.SubmitMessageRequest{
-			Name:    data.Name,
+			Id:      data.Id,
 			Message: data.Message,
 		})
 		if err != nil {
@@ -81,9 +81,9 @@ func main() {
 			return
 		}
 
-		name := r.URL.Path[len("/get/"):]
-		if name == "" {
-			http.Error(w, "Name is required", http.StatusBadRequest)
+		id := r.URL.Path[len("/get/"):]
+		if id == "" {
+			http.Error(w, "Id is required", http.StatusBadRequest)
 			return
 		}
 
@@ -91,7 +91,7 @@ func main() {
 		defer cancel()
 
 		resp, err := client.GetMessage(ctx, &pb.GetMessageRequest{
-			Name: name,
+			Id: id,
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

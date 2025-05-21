@@ -28,34 +28,34 @@ func NewMessageServer() *MessageServer {
 }
 
 func (s *MessageServer) GetMessage(ctx context.Context, req *pb.GetMessageRequest) (*pb.GetMessageResponse, error) {
-	log.Printf("Received GetMessage request for name: %s", req.Name)
+	log.Printf("Received GetMessage request for id: %s", req.Id)
 
 	s.mu.RLock()
-	message, exists := s.messages[req.Name]
+	message, exists := s.messages[req.Id]
 	s.mu.RUnlock()
 
 	if !exists {
-		return nil, status.Error(codes.NotFound, "Message not found for name: "+req.Name)
+		return nil, status.Error(codes.NotFound, "Message not found for id: "+req.Id)
 	}
 
 	return message, nil
 }
 
 func (s *MessageServer) SubmitMessage(ctx context.Context, req *pb.SubmitMessageRequest) (*pb.SubmitMessageResponse, error) {
-	log.Printf("Received SubmitMessage request for name: %s", req.Name)
-	fmt.Printf("Received SubmitMessage request for name: %s", req.Name)
+	log.Printf("Received SubmitMessage request for id: %s", req.Id)
+	fmt.Printf("Received SubmitMessage request for id: %s", req.Id)
 
-	if req.Name == "" || req.Message == "" {
-		return nil, status.Error(codes.InvalidArgument, "Name and message are required")
+	if req.Id == "" || req.Message == "" {
+		return nil, status.Error(codes.InvalidArgument, "Id and message are required")
 	}
 
 	message := &pb.GetMessageResponse{
-		Name:    req.Name,
+		Id:      req.Id,
 		Message: req.Message,
 	}
 
 	s.mu.Lock()
-	s.messages[req.Name] = message
+	s.messages[req.Id] = message
 	s.mu.Unlock()
 
 	return &pb.SubmitMessageResponse{

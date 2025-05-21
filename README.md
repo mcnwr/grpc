@@ -75,11 +75,11 @@ A web-based interface for testing gRPC connections, allowing users to submit and
 - `POST /submit`: Submit a new message
   ```json
   {
-    "name": "string",
+    "id": "string",
     "message": "string"
   }
   ```
-- `GET /get/{name}`: Retrieve a message by name
+- `GET /get/{id}`: Retrieve a message by name
 
 ### gRPC Server (Port 8080)
 
@@ -115,7 +115,7 @@ Postman supports gRPC testing through its gRPC client. Here's how to set it up:
    - In the request body, enter:
      ```json
      {
-       "name": "test",
+       "id": "test",
        "message": "Hello from Postman"
      }
      ```
@@ -126,7 +126,7 @@ Postman supports gRPC testing through its gRPC client. Here's how to set it up:
    - In the request body, enter:
      ```json
      {
-       "name": "test"
+       "id": "test"
      }
      ```
    - Click "Invoke" to retrieve the message

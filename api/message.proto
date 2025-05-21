@@ -14,18 +14,18 @@ service MessageService {
 
 // GetMessage request
 message GetMessageRequest {
-  string name = 1;
+  string id = 1;
 }
 
 // GetMessage response
 message GetMessageResponse {
-  string name = 1;
+  string id = 1;
   string message = 2;
 }
 
 // SubmitMessage request
 message SubmitMessageRequest {
-  string name = 1;
+  string id = 1;
   string message = 2;
 }
 

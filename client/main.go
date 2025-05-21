@@ -27,8 +27,8 @@ func main() {
 
 	// First, submit a message
 	submitResp, err := client.SubmitMessage(ctx, &pb.SubmitMessageRequest{
-		Name:    "mcnwr",
-		Message: "Hello from gRPC client!",
+		Id:      "N250",
+		Message: "N250 Gatotkaca adalah pesawat terbang pertama buatan Indonesia. Pesawat ini dirancang dan diprakarsai oleh B.J. Habibie, seorang ilmuan dirgantara yang diakui di dunia. N250 Gatotkaca diproduksi oleh Industri Pesawat Terbang Nusantara (IPTN), yang kemudian berubah nama menjadi PT Dirgantara Indonesia.",
 	})
 	if err != nil {
 		log.Fatalf("could not submit message: %v", err)
@@ -37,7 +37,7 @@ func main() {
 
 	// Then, get the message
 	getResp, err := client.GetMessage(ctx, &pb.GetMessageRequest{
-		Name: "mcnwr",
+		Id: "N250",
 	})
 	if err != nil {
 		log.Fatalf("could not get message: %v", err)

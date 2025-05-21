@@ -106,8 +106,8 @@
         <h2>Submit Message</h2>
         <form id="submitMessageForm">
           <div class="form-group">
-            <label for="submitName">Name:</label>
-            <input type="text" id="submitName" required />
+            <label for="submitId">ID:</label>
+            <input type="text" id="submitId" required />
           </div>
           <div class="form-group">
             <label for="submitMessage">Message:</label>
@@ -121,8 +121,8 @@
         <h2>Get Message</h2>
         <form id="getMessageForm">
           <div class="form-group">
-            <label for="getName">Name:</label>
-            <input type="text" id="getName" required />
+            <label for="getId">ID:</label>
+            <input type="text" id="getId" required />
           </div>
           <button type="submit">Get Message</button>
         </form>
@@ -169,9 +169,9 @@
 
       document.getElementById("submitMessageForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-        const name = document.getElementById("submitName").value;
+        const id = document.getElementById("submitId").value;
         const message = document.getElementById("submitMessage").value;
-        const request = { name, message };
+        const request = { id, message };
 
         updateRequestData(request);
 
@@ -194,16 +194,16 @@
 
       document.getElementById("getMessageForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-        const name = document.getElementById("getName").value;
-        const request = { name };
+        const id = document.getElementById("getId").value;
+        const request = { id };
 
         updateRequestData(request);
 
         try {
-          const response = await fetch(`/get/${name}`);
+          const response = await fetch(`/get/${id}`);
           const data = await response.json();
           updateResponseData(data);
-          showMessage(`Message for ${data.name}: ${data.message}`);
+          showMessage(`Message for ${data.id}: ${data.message}`);
         } catch (error) {
           updateResponseData({ error: error.message });
           showMessage("Error: " + error.message, true);
